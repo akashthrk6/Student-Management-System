@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// POST: Create a new student
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
   }
 }
 
+// GET: List all students
 export async function GET() {
   try {
     const students = await prisma.student.findMany({
