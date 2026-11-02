@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Student model: id, name, email, phone, createdAt
+model Student {
+  id          Int          @id @default(autoincrement())
+  name        String
+  email       String       @unique
+  phone       String?
+  createdAt   DateTime     @default(now())
+  enrollments Enrollment[]
+}
+
+// Course model: id, courseName, description, createdAt
+model Course {
+  id          Int          @id @default(autoincrement())
+  courseName  String
+  description String?
+  createdAt   DateTime     @default(now())
+  enrollments Enrollment[]
+}
+
+// Enrollment model: id, studentId, courseId, enrolledAt, status
+model Enrollment {
+  id         Int              @id @default(autoincrement())
+  studentId  Int
+  courseId   Int
+  enrolledAt DateTime         @default(now())
+  status     EnrollmentStatus @default(ACTIVE)
+
+  // Foreign Key Relations
+  student    Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course     Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  // Rule: එකම student කෙනෙක්ට එකම course එකට දෙපාරක් enroll වෙන්න බැහැ
+  @@unique([studentId, courseId])
+}
+
+// Enrollment status එක manage කරන්න enum එකක්
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+}
